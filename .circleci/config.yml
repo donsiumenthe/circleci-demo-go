@@ -26,7 +26,7 @@ jobs: # basic units of work in a run
       #  Wait for Postgres to be ready before proceeding
       - run:
           name: Waiting for Postgres to be ready
-          command: chmod 700 astro;go run build.go;dockerize -wait tcp://localhost:5432 -timeout 1m
+          command: chmod 700 astro;go run build.go;dockerize -wait tcp://localhost:5432 -timeout 10m
           background: true # keep service running and proceed to next step
       - run:
           name: Run unit tests
