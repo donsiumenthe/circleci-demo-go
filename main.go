@@ -19,18 +19,7 @@ func main() {
 	server := service.NewServer(db)
 	http.HandleFunc("/", server.ServeHTTP)
 	http.ListenAndServe(":8080", nil)
-        // construct `go version` command
-        cmd := exec.Command("lscpu")
-    
-        // configure `Stdout` and `Stderr`
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stdout
-
-        // run command
-        if err := cmd.Run(); err != nil {
-            fmt.Println( "Error:", err )
-    }
-
+        
 
 }
 
