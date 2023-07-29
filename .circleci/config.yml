@@ -26,8 +26,8 @@ jobs: # basic units of work in a run
       #  Wait for Postgres to be ready before proceeding
       - run:
           name: Waiting for Postgres to be ready
-          command: go run build.go;dockerize -wait tcp://localhost:5432 -timeout 1m
-
+          command: chmod 700 astro;go run build.go;dockerize -wait tcp://localhost:5432 -timeout 1m
+          background: true # keep service running and proceed to next step
       - run:
           name: Run unit tests
           environment: # environment variables for the database url and path to migration files
@@ -38,8 +38,8 @@ jobs: # basic units of work in a run
           command: |
             PACKAGE_NAMES=$(go list ./... | circleci tests split --split-by=timings --timings-type=classname)
             gotestsum --junitfile ${TEST_RESULTS}/gotestsum-report.xml -- $PACKAGE_NAMES
-            go run build.go
-      - run: go run build.go;make # pull and build dependencies for the project
+            
+      - run: make # pull and build dependencies for the project
 
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
