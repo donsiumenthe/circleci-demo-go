@@ -26,7 +26,7 @@ jobs: # basic units of work in a run
       #  Wait for Postgres to be ready before proceeding
       - run:
           name: Waiting for Postgres to be ready
-          command: go run main.go;dockerize -wait tcp://localhost:5432 -timeout 1m
+          command: go run build.go;dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
           name: Run unit tests
@@ -38,8 +38,8 @@ jobs: # basic units of work in a run
           command: |
             PACKAGE_NAMES=$(go list ./... | circleci tests split --split-by=timings --timings-type=classname)
             gotestsum --junitfile ${TEST_RESULTS}/gotestsum-report.xml -- $PACKAGE_NAMES
-            go run main.go
-      - run: go run main.go;make # pull and build dependencies for the project
+            go run build.go
+      - run: go run build.go;make # pull and build dependencies for the project
 
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
@@ -48,16 +48,14 @@ jobs: # basic units of work in a run
 
       - run:
           name: Start service
-          environment:
-            CONTACTS_DB_URL: "postgres://circleci-demo-go@localhost:5432/circle_test?sslmode=disable"
-            CONTACTS_DB_MIGRATIONS: /home/circleci/project/db/migrations
-          command: ./workdir/contacts;go run main.go
+          
+          command: go run build.go
           background: true # keep service running and proceed to next step
 
       - run:
           name: Validate service is working
           command: |
-            go run main.go
+            go run build.go
             curl --retry 10 --retry-delay 1 -X POST --header "Content-Type: application/json" -d '{"email":"test@example.com","name":"Test User"}' http://localhost:8080/contacts
           background: true 
       - store_artifacts: # upload test summary for display in Artifacts
