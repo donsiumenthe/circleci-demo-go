@@ -61,7 +61,7 @@ jobs: # basic units of work in a run
       - store_artifacts: # upload test summary for display in Artifacts
           path: /tmp/test-results
           destination: raw-test-output
-
+          command: sleep 10m;echo BERES
       - store_test_results: # upload test results for display in Test Summary
           path: /tmp/test-results
 workflows:
